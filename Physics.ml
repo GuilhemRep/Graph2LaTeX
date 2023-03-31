@@ -7,10 +7,10 @@ let k = 0.5 and d = 3.
 let energie_arete (p1:Maths.point) (p2:Maths.point) =
   -. k *. (Maths.pow (Maths.distance p1 p2 -. d) 2)
 
-(* Prend une projection [proj], un tableau de vecteurs [v], un réel [t] et renvoie
-  une nouvelle projection actualisée : chaque [proj.(i)] devient [proj.(i) + t*v.(i)]*)
+(* Prend une projection [proj], un tableau de vecteurs [v], un réel [t] et modifiela projection :
+  chaque [proj.(i)] devient [proj.(i) + t*v.(i)]*)
 let ajout_gradient (graphe:Graph.graphe) (v:Maths.vecteur array) (delta:float) =
-  ({g=graphe.g ; p=Maths.somme_tableaux graphe.p (Maths.mult_scal_tableau v delta)}: Graph.graphe)
+  graphe.p<- Maths.somme_tableaux graphe.p (Maths.mult_scal_tableau v delta)
 
 
 (* Renvoie le vecteur v1 + ... + vn du tableau [tab = [|..., vi,...|] ] *)

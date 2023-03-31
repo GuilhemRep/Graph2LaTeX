@@ -1,7 +1,7 @@
 type arc = {i:int ; w:float} (* but,poids *)
 
 (* Tableau d'arcs : la case i contient la liste des arcs {j ; w} tels que i->j est un arc de poids w *)
-type graphe = {g : (arc list) array ; p : Maths.projection}
+type graphe = {g : (arc list) array ; mutable p : Maths.projection}
 
 (* Renvoie une projection pseudo-aléatoire de [n] points distints*)
 let init_projection gen (n:int) =
@@ -36,6 +36,10 @@ let init_graphe (n:int) =
   assert (n>=0);
   ({g = Array.make n [] ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
 
+
+(* Change la projection du graphe et la remplace par une autre random *)
+let shake (graphe:graphe) gen =
+  graphe.p <- init_projection gen (Array.length graphe.g)
 
 (* Répond si x est voisin de y dans le graphe *)
 let connected (graphe:graphe) (s1:int) (s2:int) =

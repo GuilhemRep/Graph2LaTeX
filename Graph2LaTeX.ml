@@ -25,12 +25,9 @@ let une_descente (graphe:Graph.graphe) (delta:float) =
 
 (* [n] étapes de descente. La décroissance du pas est linéaire. *)
 let descente (graphe:Graph.graphe) gen (n:int) =
-  let g = ref graphe in
-  (**************** SHAKE THE PROJECTION ****************)
   for i=1 to n do
-    g := une_descente (!g) (0.2 /. (1.+.Float.of_int i))
-  done;
-  !g
+    une_descente graphe (0.2 /. (1.+.Float.of_int i))
+  done
 
 (* Choisit la projection d'énergie minimale parmi [k] essais (différents grace à la fonction de hashage) *)
 let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
