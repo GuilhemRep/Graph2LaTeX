@@ -1,12 +1,40 @@
 type arc = {i:int ; w:float} (* but,poids *)
 
 (* Tableau d'arcs : la case i contient la liste des arcs {j ; w} tels que i->j est un arc de poids w *)
-type graphe = (arc list) array
+type graphe = {g : (arc list) array ; p : Maths.projection}
+
+(* Renvoie une projection pseudo-aléatoire de [n] points distints*)
+let init_projection gen (n:int) =
+  (* Ajoute [n] points à [l] sans doublons *)
+  let rec init n l =
+    if n = 0 then l
+    else (
+      let p:Maths.point = {x=gen() ; y=gen()} in
+      if List.mem p l then init n l (* Nouvel essai si point deja present dans la liste *) 
+      else init (n-1) (p::l)
+    ) in
+  
+  (Array.of_list (init n []):Maths.projection)
+
+
+(* Renvoie une nouvelle projection décallée pour avoir des coordonnées latex plus petites *)
+let decale (graphe:graphe) =
+  let n = Array.length graphe.p in
+  let p = graphe.p in
+  let minx,miny = ref max_float, ref max_float in
+  for i=0 to (n-1) do
+    minx := min (!minx) (graphe.p.(i).x);
+    miny := min (!miny) (graphe.p.(i).y);
+  done;
+  for i=0 to (n-1) do
+    p.(i)<- {x = graphe.p.(i).x -. (!minx) ; y = graphe.p.(i).y -. (!miny)}
+  done;
+  ({g=graphe.g ; p = p}:graphe)
 
 (* Crée un graphe de taille [n] *)
 let init_graphe (n:int) =
   assert (n>=0);
-  (Array.make n []:graphe)
+  ({g = Array.make n [] ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
 
 
 (* Répond si x est voisin de y dans le graphe *)
@@ -15,7 +43,7 @@ let connected (graphe:graphe) (s1:int) (s2:int) =
     [] -> false
     |a::q -> (a.i == s2) || aux q
   in 
-    aux (graphe.(s1))
+    aux (graphe.g.(s1))
 
 (* Ajoute l'arc d'arrivée [y] et de poids [w] à la liste d'arcs [l]. Si un arc d'arrivée [y] est
 déjà présent, il est écrasé par le nouvel arc*)
@@ -26,4 +54,4 @@ let rec actualise (a:arc) (l:arc list) = match l with
 
 (* Ajoute l'arête [x]->[y] de poids [weight] dans le graphe [graphe] *)
 let add_edge (graphe:graphe) (x:int) (a:arc) =
-  (graphe).(x) <- actualise a (graphe).(x)
+  (graphe.g).(x) <- actualise a (graphe.g).(x)

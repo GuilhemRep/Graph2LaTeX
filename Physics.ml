@@ -9,8 +9,8 @@ let energie_arete (p1:Maths.point) (p2:Maths.point) =
 
 (* Prend une projection [proj], un tableau de vecteurs [v], un réel [t] et renvoie
   une nouvelle projection actualisée : chaque [proj.(i)] devient [proj.(i) + t*v.(i)]*)
-let ajout_gradient (proj:Maths.projection) (v:Maths.vecteur array) (delta:float) =
-  (Maths.somme_tableaux proj (Maths.mult_scal_tableau v delta) : Maths.projection)
+let ajout_gradient (graphe:Graph.graphe) (v:Maths.vecteur array) (delta:float) =
+  ({g=graphe.g ; p=Maths.somme_tableaux graphe.p (Maths.mult_scal_tableau v delta)}: Graph.graphe)
 
 
 (* Renvoie le vecteur v1 + ... + vn du tableau [tab = [|..., vi,...|] ] *)
@@ -41,49 +41,49 @@ let gradient_energie_arete (p1:Maths.point) (p2:Maths.point) =
 
 
 (* Force appliquée à un sommet [s]. *)
-let resultante_forces (s:int) (graphe:Graph.graphe) (proj:Maths.projection) =
-  let coord_s = proj.(s) in
+let resultante_forces (s:int) (graphe:Graph.graphe) =
+  let coord_s = graphe.p.(s) in
 
   let rec aux accumulateur liste_voisins = match liste_voisins with
     []-> accumulateur
     |voisin::q -> 
       (
-        let coord_voisin = proj.(voisin.i) in
+        let coord_voisin = graphe.p.(voisin.i) in
         let attraction = (potentiel_coulomb ((Maths.distance coord_s coord_voisin)/.d)) in 
         aux (Maths.somme_vecteurs accumulateur (Maths.mult_scal_vecteur (gradient_energie_arete coord_s coord_voisin) attraction)) q
       )
     in
 
   (* Attraction : les sommets reliés à p *)
-  let n = Array.length graphe in
-  let force = ref (aux (Maths.init_vecteur()) (graphe.(s):Graph.arc list) ) in
+  let n = Array.length graphe.g in
+  let force = ref (aux (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list) ) in
   (* Répulsion : les sommets non-reliés *)
   for i=0 to (n-1) do
     if (i <> s) && not (Graph.connected graphe s i) then
-      let coord_point = proj.(i) in
+      let coord_point = graphe.p.(i) in
       let repulsion = potentiel_coulomb (Maths.distance coord_s coord_point) in 
-      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (proj.(i))) repulsion);
+      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) repulsion);
   done;
   (!force)
 
 
 (* Renvoie un tableau de vecteurs de taille n correspondant au gradient
 de l'énergie du graphe représenté par la projection [proj] *)
-let gradient_energie (graphe:Graph.graphe) (proj:Maths.projection) =
-  let taille = Array.length graphe in
+let gradient_energie (graphe:Graph.graphe) =
+  let taille = Array.length graphe.g in
   let g = Array.make taille (Maths.init_vecteur ()) in
     for p=0 to (taille -1) do
-      g.(p)<- resultante_forces p graphe proj
+      g.(p)<- resultante_forces p graphe
     done;
     g
 
 (* Calcule l'énergie potentielle d'un graphe [g] *)
-let energie (graphe:Graph.graphe) (proj:Maths.projection) =
+let energie (graphe:Graph.graphe) =
   let rec aux l point = match l with
     []    -> 0.
-    |(a:Graph.arc)::q -> energie_arete (proj.(a.i)) point +. aux q point in
+    |(a:Graph.arc)::q -> energie_arete (graphe.p.(a.i)) point +. aux q point in
   let e = ref 0. in
-  for i=0 to (Array.length graphe - 1) do
-    e := !e +. aux (graphe.(i)) (proj.(i))
+  for i=0 to (Array.length graphe.g - 1) do
+    e := !e +. aux (graphe.g.(i)) (graphe.p.(i))
   done;
   !e

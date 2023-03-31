@@ -3,7 +3,6 @@ type vecteur = {x:float ; y:float}
 
 type projection = point array
 
-
 (* Exponentiation rapide : calcule x^n *)
 let rec pow (x:float) (n:int) =
   if n = 0 then 1.
@@ -36,18 +35,6 @@ let init_vecteur ():vecteur =
   {x=0. ; y=0.}
 
 
-(* Renvoie une projection pseudo-aléatoire de [n] points distints*)
-let init_projection gen (n:int) =
-  (* Ajoute [n] points à [l] sans doublons *)
-  let rec init n l =
-    if n = 0 then l
-    else (
-      let p:point = {x=gen() ; y=gen()} in
-      if List.mem p l then init n l (* Nouvel essai si point deja present dans la liste *) 
-      else init (n-1) (p::l)
-    ) in
-  
-  (Array.of_list (init n []):projection)
 
 
 (* Distance euclidienne entre les points [p1] et [p2]*)
@@ -94,17 +81,3 @@ let norme (v:vecteur array) =
     n:= max (!n) (v.(i).x ** 2 +. v.(i).y ** 2)
   done;
   Float.sqrt (!n)
-
-(* Renvoie une nouvelle projection décallée pour avoir des coordonnées latex plus petites *)
-let decale (proj:projection) =
-  let n = Array.length proj in
-  let p = init_projection (pseudo_aleatoire (10*n)) n in
-  let minx,miny = ref max_float, ref max_float in
-  for i=0 to (n-1) do
-    minx := min (!minx) (proj.(i).x);
-    miny := min (!miny) (proj.(i).y);
-  done;
-  for i=0 to (n-1) do
-    p.(i)<- {x = proj.(i).x -. (!minx) ; y = proj.(i).y -. (!miny)}
-  done;
-  p
