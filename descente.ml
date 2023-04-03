@@ -8,8 +8,5 @@ let () =
     for i=0 to (n/2) do
         Graph.add_edge g (Int.of_float(gen())) (Int.of_float(gen())) 1.;
     done;
-    print_float (g.p.(0).x);
-    print_newline();
-    Graph2LaTeX.descente g 10000;
-    print_float (g.p.(0).x);
+    Graph2LaTeX.meilleure_descente g 1000 100;
     Graph2LaTeX.write_file "graphe.tex" g

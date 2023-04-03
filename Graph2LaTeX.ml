@@ -24,7 +24,7 @@ let une_descente (graphe:Graph.graphe) (delta:float) =
 
 
 (* [n] étapes de descente. La décroissance du pas est linéaire. *)
-let descente (graphe:Graph.graphe) gen (n:int) =
+let descente (graphe:Graph.graphe) (n:int) =
   for i=1 to n do
     une_descente graphe (0.2 /. (1.+.Float.of_int i))
   done
@@ -34,17 +34,19 @@ let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
   assert (n>0);
   assert (k>0);
   let gen = Maths.pseudo_aleatoire (Array.length graphe.g) in
-  let meilleure_proj = ref (descente graphe gen n) in
+  let meilleur_graphe = ref graphe in
+  descente graphe n;
   let min_energie = ref (Physics.energie graphe) in
   for i=1 to (k-1) do
-  let proj = descente graphe gen n in
-  let e = Physics.energie graphe in
-    if e < !min_energie then(
-      meilleure_proj := proj;
-      min_energie := e 
-    )
+    Graph.shake graphe gen;
+    descente graphe n;
+    let e = Physics.energie graphe in
+      if e < !min_energie then(
+        meilleur_graphe := graphe;
+        min_energie := e 
+      )
   done;
-  Graph.decale graphe (**************** TODO *)
+  graphe.p<- (Graph.decale (!meilleur_graphe)).p
 
 
 (* Ecrit la projection du graphe dans le fichier file *)
@@ -75,33 +77,3 @@ let write_file (file:string) (graphe:Graph.graphe) =
     ) graphe.g.(i)
   done;
   Printf.fprintf oc "%s" "\\end{tikzpicture}\n\n\n"
-
-(*let latex (graphe:Graph.graphe) (proj:Maths.projection) =
-  let n = Array.length graphe in
-  print_string "\\begin{tikzpicture}\n";
-  for i=0 to (n-1) do
-    print_string("\\node[draw] (S");
-    print_int (i);
-    print_string (") at (");
-    print_float (proj.(i).x);
-    print_string ",";
-    print_float (proj.(i).y);
-    print_string ") {";
-    print_int i;
-    print_string "};\n";
-  done;
-
-  for i=0 to (n-1) do
-    List.iter (
-      fun x -> 
-        print_string("\\draw[->,>=latex] (S");
-        print_int (i);
-        print_string (") -- (S");
-        print_int (x.i);
-        print_string (");\n");
-    ) graphe.(i)
-  done;
-  print_string "\\end{tikzpicture}\n\n";
-  print_newline ();
-  print_newline ()
-  *)

@@ -41,7 +41,7 @@ let init_graphe (n:int) =
 let shake (graphe:graphe) gen =
   graphe.p <- init_projection gen (Array.length graphe.g)
 
-(* Répond si x est voisin de y dans le graphe *)
+(* True si [s1] est voisin de [s2] dans [graphe], false sinon *)
 let connected (graphe:graphe) (s1:int) (s2:int) =
   let rec aux l = match l with
     [] -> false
@@ -57,5 +57,5 @@ let rec actualise (a:arc) (l:arc list) = match l with
   |t::q -> t::(actualise a q)
 
 (* Ajoute l'arête [x]->[y] de poids [weight] dans le graphe [graphe] *)
-let add_edge (graphe:graphe) (x:int) (a:arc) =
-  (graphe.g).(x) <- actualise a (graphe.g).(x)
+let add_edge (graphe:graphe) (x:int) (y:int) (w:float) =
+  (graphe.g).(x) <- actualise {i=y ; w=w} (graphe.g).(x)

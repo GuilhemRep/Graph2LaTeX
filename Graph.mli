@@ -6,4 +6,4 @@ val init_graphe : int -> graphe
 val shake : graphe -> (unit -> float) -> unit
 val connected : graphe -> int -> int -> bool
 val actualise : arc -> arc list -> arc list
-val add_edge : graphe -> int -> arc -> unit
+val add_edge : graphe -> int -> int -> float -> unit

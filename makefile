@@ -7,8 +7,8 @@ all:
 	ocamlc -c -i Physics.ml > Physics.mli
 	ocamlc -c Graph2LaTeX.ml
 	ocamlc -c -i Graph2LaTeX.ml > Graph2LaTeX.mli
-	ocamlc -c affichage.ml
-	ocamlc -o test Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo affichage.cmo
+	ocamlc -c descente.ml
+	ocamlc -o descente Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo descente.cmo
 
 clean:
 	rm -rf exemple *.mli *.cmi *.cmo *~
