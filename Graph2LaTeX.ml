@@ -26,10 +26,11 @@ let une_descente (graphe:Graph.graphe) (delta:float) =
 (* [n] étapes de descente. La décroissance du pas est linéaire. *)
 let descente (graphe:Graph.graphe) (n:int) =
   for i=1 to n do
-    une_descente graphe (0.2 /. (1.+.Float.of_int i))
+    une_descente graphe (1. /. (1.+.Float.of_int i))
+    (*une_descente graphe 0.3*)
   done
 
-(* Choisit la projection d'énergie minimale parmi [k] essais (différents grace à la fonction de hashage) *)
+(* Choisit la projection d'énergie minimale parmi [k] essais *)
 let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
   assert (n>0);
   assert (k>0);
@@ -50,30 +51,41 @@ let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
 
 
 (* Ecrit la projection du graphe dans le fichier file *)
-let write_file (file:string) (graphe:Graph.graphe) =
-  let oc = open_out file in
+let graph_to_string (graphe:Graph.graphe) =
+  let str = ref "" in
   let n = Array.length graphe.g in
-  Printf.fprintf oc "%s" "\\begin{tikzpicture}\n";
+  str := !str ^ "\\begin{tikzpicture}\n";
   for i=0 to (n-1) do
-    Printf.fprintf oc "%s" "\\node[draw] (S";
-    Printf.fprintf oc "%s" (Int.to_string i);
-    Printf.fprintf oc "%s" ") at (";
-    Printf.fprintf oc "%s" (Float.to_string (graphe.p.(i).x));
-    Printf.fprintf oc "%s" ",";
-    Printf.fprintf oc "%s" (Float.to_string (graphe.p.(i).y));
-    Printf.fprintf oc "%s" ") {";
-    Printf.fprintf oc "%s" (Int.to_string i);
-    Printf.fprintf oc "%s" "};\n";
+    str := !str ^ "\\node[draw] (S";
+    str := !str ^ (Int.to_string i);
+    str := !str ^ ") at (";
+    str := !str ^ (Float.to_string (graphe.p.(i).x));
+    str := !str ^ ",";
+    str := !str ^ (Float.to_string (graphe.p.(i).y));
+    str := !str ^ ") {";
+    str := !str ^ (Int.to_string i);
+    str := !str ^ "};\n";
   done;
 
   for i=0 to (n-1) do
     List.iter (
       fun x -> 
-        Printf.fprintf oc "%s" "\\draw[->,>=latex] (S";
-        Printf.fprintf oc "%s" (Int.to_string i);
-        Printf.fprintf oc "%s" ") -- (S";
-        Printf.fprintf oc "%s" (Int.to_string (x.i));
-        Printf.fprintf oc "%s" ");\n";
+        str := !str ^ "\\draw[->,>=latex] (S";
+        str := !str ^ (Int.to_string i);
+        str := !str ^ ") -- (S";
+        str := !str ^ (Int.to_string (x.i));
+        str := !str ^ ");\n";
     ) graphe.g.(i)
   done;
-  Printf.fprintf oc "%s" "\\end{tikzpicture}\n\n\n"
+  str := !str ^ "\\end{tikzpicture}\n\n\n";
+  !str
+
+(* Ecrit la projection du graphe dans le fichier file *)
+let write_file (file:string) (graphe:Graph.graphe) =
+  let oc = open_out file in
+  Printf.fprintf oc "%s" (graph_to_string graphe)
+
+(* Ecrit str dans file *)
+let write_string_file (file:string) (str:string) =
+  let oc = open_out file in
+  Printf.fprintf oc "%s" str

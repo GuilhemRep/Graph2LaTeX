@@ -9,6 +9,8 @@ all:
 	ocamlc -c -i Graph2LaTeX.ml > Graph2LaTeX.mli
 	ocamlc -c descente.ml
 	ocamlc -o descente Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo descente.cmo
+	./descente
+	pdflatex test.tex
 
 clean:
 	rm -rf exemple *.mli *.cmi *.cmo *~

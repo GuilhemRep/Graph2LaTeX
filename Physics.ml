@@ -1,7 +1,7 @@
 open Graph
 
 (* Définition de [k] (constante de Hooke) et [d] (élongation à vide d'une arête) *)
-let k = 0.5 and d = 3.
+let k = 0.5 and d = 5.
 
 (* Loi de Hooke : renvoie l'énergie potentielle entre les points [p1] et [p2]*)
 let energie_arete (p1:Maths.point) (p2:Maths.point) =
@@ -12,9 +12,14 @@ let energie_arete (p1:Maths.point) (p2:Maths.point) =
 let ajout_gradient (graphe:Graph.graphe) (v:Maths.vecteur array) (delta:float) =
   graphe.p<- Maths.somme_tableaux graphe.p (Maths.mult_scal_tableau v delta)
 
-let potentiel_coulomb x =(1./.100000.)
+(*let potentiel_coulomb x =(1./.1000.)*)
 
-(*let potentiel_coulomb x = min (10. /. x -. 10. /. (Maths.pow x 2)) (1./.100000000.)*)  
+let potentiel_coulomb x =
+  assert (x>0.);
+  (*let c = (1. /. x -. 1. /. (x*.x))/.10. and m = 0.000001 in
+  let c = -.(1. /. x)/.10. and m = 0.000001 in
+  if c<m then c else c*)
+  max 0. ((x-.d)/.1000.)
 
 
 (*
@@ -40,7 +45,8 @@ let resultante_forces (s:int) (graphe:Graph.graphe) =
     |voisin::q -> 
       (
         let coord_voisin = graphe.p.(voisin.i) in
-        let attraction = potentiel_coulomb ((Maths.distance coord_s coord_voisin)/.d) in 
+        let attraction = -.potentiel_coulomb ((Maths.distance coord_s coord_voisin)/.d) in 
+        (*print_float (Maths.distance coord_s coord_voisin); print_string "  "; print_float attraction; print_newline ();*)
         aux (Maths.somme_vecteurs accumulateur (Maths.mult_scal_vecteur (gradient_energie_arete coord_s coord_voisin) attraction)) q
       )
     in
@@ -52,9 +58,10 @@ let resultante_forces (s:int) (graphe:Graph.graphe) =
   for i=0 to (n-1) do
     if (i <> s) && not (Graph.connected graphe s i) then
       let coord_point = graphe.p.(i) in
-      let repulsion = potentiel_coulomb (Maths.distance coord_s coord_point) in 
-      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) repulsion);
-  done;
+      let repulsion = ( potentiel_coulomb (Maths.distance coord_s coord_point) ) in 
+      print_float repulsion; print_newline ();
+      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) 0.03);
+    done;
   assert (not (Float.is_nan (!force.x)));
   assert (not (Float.is_nan (!force.y)));
   (!force)
