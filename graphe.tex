@@ -1,0 +1,36 @@
+\begin{tikzpicture}[
+    vertex/.style = {shape=circle,draw,minimum size=2em},
+    edge/.style = {-,-Latex},
+    ]
+\node[vertex] (S0) at (3.76345108976,1.56967361765) {a};
+\node[vertex] (S1) at (7.08659216048,3.38925784847) {b};
+\node[vertex] (S2) at (6.84783773954,0.) {c};
+\node[vertex] (S3) at (9.54919172635,5.77607458684) {d};
+\node[vertex] (S4) at (7.83169385845,8.98678978185) {e};
+\node[vertex] (S5) at (11.2362917718,8.02224792467) {f};
+\node[vertex] (S6) at (4.0496598754,8.90275343934) {g};
+\node[vertex] (S7) at (8.20815142924,12.3941384852) {h};
+\node[vertex] (S8) at (11.7315152817,2.75350503976) {i};
+\node[vertex] (S9) at (4.32091705126,12.6290996706) {j};
+\node[vertex] (S10) at (0.415377643637,3.90705950574) {k};
+\node[vertex] (S11) at (3.02637417684,6.1466257688) {l};
+\node[vertex] (S12) at (0.,7.83247395844) {m};
+\draw[edge, ultra thick] (S0) to node[above,sloped] {$2.$} (S1);
+\draw[edge, ultra thick] (S1) to node[above,sloped] {$2.$} (S2);
+\draw[edge, ultra thick] (S1) to node[above,sloped] {$2.$} (S3);
+\draw[edge, ultra thick] (S2) to node[above,sloped] {$2.$} (S0);
+\draw[edge, ultra thick] (S3) to node[above,sloped] {$2.$} (S4);
+\draw[edge, ultra thick] (S4) to node[above,sloped] {$2.$} (S5);
+\draw[edge, ultra thick] (S4) to node[above,sloped] {$2.$} (S6);
+\draw[edge, ultra thick] (S5) to node[above,sloped] {$2.$} (S7);
+\draw[edge, ultra thick] (S5) to node[above,sloped] {$2.$} (S8);
+\draw[edge, ultra thick] (S6) to node[above,sloped] {$2.$} (S7);
+\draw[edge, ultra thick] (S6) to node[above,sloped] {$2.$} (S9);
+\draw[edge, ultra thick] (S6) to node[above,sloped] {$2.$} (S10);
+\draw[edge, ultra thick] (S7) to node[above,sloped] {$2.$} (S9);
+\draw[edge, ultra thick] (S10) to node[above,sloped] {$2.$} (S11);
+\draw[edge, ultra thick] (S11) to node[above,sloped] {$2.$} (S12);
+\draw[edge, ultra thick] (S12) to node[above,sloped] {$2.$} (S10);
+\end{tikzpicture}
+
+

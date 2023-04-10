@@ -36,6 +36,11 @@ let init_graphe (n:int) =
   assert (n>=0);
   ({g = Array.make n [] ; l = Array.init n (Int.to_string) ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
 
+(* Crée un graphe de taille de sommets ceux donnés par le tableau [label] *)
+let init_graphe_label (label:string array) =
+  let n = Array.length label in
+  ({g = Array.make n [] ; l = label ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
+
 let renomme_etiquette (g:graphe) (i:int) (s:string) =
   assert (i < Array.length g.g);
   g.l.(i)<- s
@@ -59,12 +64,30 @@ let rec actualise (a:arc) (l:arc list) = match l with
   |t::q when t.i == a.i -> a::q
   |t::q -> t::(actualise a q)
 
-(* Ajoute l'arête [x]->[y] de poids [weight] dans le graphe [graphe] : non-orienté, pas de puits pour l'instant *)
-let add_edge (graphe:graphe) (x:int) (y:int) (w:float) =
+(* Ajoute l'arête [x]->[y] (x,y des entiers) de poids [weight] dans le graphe [graphe] : orienté, pas de puits pour l'instant *)
+let add_edge_coord (graphe:graphe) (x:int) (y:int) (w:float) =
   if (x<>y) then (
     (graphe.g).(x) <- actualise {i=y ; w=w} (graphe.g).(x);
-    (graphe.g).(y) <- actualise {i=x ; w=w} (graphe.g).(y)
+    (*(graphe.g).(y) <- actualise {i=x ; w=w} (graphe.g).(y)*)
   )
+
+
+
+(* Ajoute l'arête [x]->[y] (x,y les labels des sommets !) de poids [weight] dans le graphe [graphe] : orienté, pas de puits pour l'instant *)
+let add_edge (graphe:graphe) (l1:string) (l2:string) (w:float) =
+  let x = ref (-1) and y = ref (-1) in
+  let n = Array.length (graphe.l) in
+    for i=0 to (n-1) do
+      if graphe.l.(i) = l1 then x:= i
+    done;
+  for i=0 to (n-1) do
+    if graphe.l.(i) = l2 then y:= i
+  done;
+  if (!x) == (-1) then failwith "Label 1 inexistant";
+  if (!y) == (-1) then failwith "Label 2 inexistant";
+  add_edge_coord graphe (!x) (!y) w
+
+
 
 (* Compte le nombre de croisements dans la projection du graphe *)
 let croisements (graphe:graphe) =

@@ -3,4 +3,5 @@
 *.cmo
 *.log
 *.pdf
+*.tex
 .vscode
