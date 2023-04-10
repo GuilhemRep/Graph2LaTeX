@@ -1,7 +1,7 @@
 open Graph
 
 (* Définition de [k] (constante de Hooke) et [d] (élongation à vide d'une arête) *)
-let k = 0.5 and d = 5.
+let k = 2. and d = 8.
 
 (* Loi de Hooke : renvoie l'énergie potentielle entre les points [p1] et [p2]*)
 let energie_arete (p1:Maths.point) (p2:Maths.point) =
@@ -19,7 +19,7 @@ let potentiel_coulomb x =
   (*let c = (1. /. x -. 1. /. (x*.x))/.10. and m = 0.000001 in
   let c = -.(1. /. x)/.10. and m = 0.000001 in
   if c<m then c else c*)
-  max 0. ((x-.d)/.1000.)
+  0.003 +. (max 0. ((x-.d)/.1000.))
 
 
 (*
@@ -39,29 +39,56 @@ let gradient_energie_arete (p1:Maths.point) (p2:Maths.point) =
 let resultante_forces (s:int) (graphe:Graph.graphe) =
   let coord_s = graphe.p.(s) in
 
-  let rec aux accumulateur liste_voisins = match liste_voisins with
+  let rec fun_attr accumulateur liste_voisins = match liste_voisins with
     []-> accumulateur
-    |voisin::q when voisin.i == s -> aux accumulateur q
+    |voisin::q when voisin.i == s -> fun_attr accumulateur q
     |voisin::q -> 
       (
         let coord_voisin = graphe.p.(voisin.i) in
-        let attraction = -.potentiel_coulomb ((Maths.distance coord_s coord_voisin)/.d) in 
+        (*print_float (coord_voisin.x);
+        print_string "  ";
+        print_float (coord_voisin.y);
+        print_string "  |  ";
+        print_float (coord_s.x);
+        print_string "  ";
+        print_float (coord_s.y);
+        print_string "  |-> ";
+        print_int (voisin.i);
+        print_string "  ";
+        print_int s;
+        print_newline();*)
+        let attraction = 0.2*.(voisin.w+.2.) *. potentiel_coulomb ((Maths.distance coord_s coord_voisin)/.d) in 
         (*print_float (Maths.distance coord_s coord_voisin); print_string "  "; print_float attraction; print_newline ();*)
-        aux (Maths.somme_vecteurs accumulateur (Maths.mult_scal_vecteur (gradient_energie_arete coord_s coord_voisin) attraction)) q
+        fun_attr (Maths.somme_vecteurs accumulateur (Maths.mult_scal_vecteur (gradient_energie_arete coord_s coord_voisin) attraction)) q
       )
     in
+  
+  let rec fun_angle accumulateur liste_voisins nombre_voisin = match liste_voisins with
+    []-> accumulateur 
+    |voisin::q when voisin.i == s -> fun_attr accumulateur q
+    |voisin::q-> (
+      let coord_voisin = graphe.p.(voisin.i) in
+      let f = Maths.point2vect coord_s coord_voisin in
+      let opp_f = Maths.mult_scal_vecteur f (0.01) in
+      fun_angle (Maths.somme_vecteurs opp_f accumulateur) q (nombre_voisin + 1)
+    )
+  in
 
   (* Attraction : les sommets reliés à p *)
   let n = Array.length graphe.g in
-  let force = ref (aux (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list) ) in
-  (* Répulsion : les sommets non-reliés *)
+  let force = ref (fun_attr (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list) ) in
+  (*force := Maths.init_vecteur();*)
+  (* Répulsion : les sommets non-reliés ; on actualise [force] *)
   for i=0 to (n-1) do
     if (i <> s) && not (Graph.connected graphe s i) then
       let coord_point = graphe.p.(i) in
-      let repulsion = ( potentiel_coulomb (Maths.distance coord_s coord_point) ) in 
-      print_float repulsion; print_newline ();
-      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) 0.03);
+      (*let repulsion = ( potentiel_coulomb (Maths.distance coord_s coord_point) ) in*)
+      force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) 0.004);
     done;
+
+  (* Pénalisations des angles aigus *)
+  force := Maths.somme_vecteurs (!force) (fun_angle (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list) 0);
+
   assert (not (Float.is_nan (!force.x)));
   assert (not (Float.is_nan (!force.y)));
   (!force)

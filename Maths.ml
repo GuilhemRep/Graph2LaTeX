@@ -34,6 +34,8 @@ let init_point ():point =
 let init_vecteur ():vecteur = 
   {x=0. ; y=0.}
 
+let point2vect (p1:point) (p2:point) : vecteur =
+  {x=p2.x -. p1.x ; y=p2.y -. p1.y}
 
 
 

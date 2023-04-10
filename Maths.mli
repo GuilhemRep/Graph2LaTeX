@@ -6,6 +6,7 @@ val ( ** ) : float -> int -> float
 val pseudo_aleatoire : int -> unit -> float
 val init_point : unit -> point
 val init_vecteur : unit -> vecteur
+val point2vect : point -> point -> vecteur
 val distance : point -> point -> float
 val mult_scal_tableau : vecteur array -> float -> vecteur array
 val mult_scal_vecteur : vecteur -> float -> vecteur

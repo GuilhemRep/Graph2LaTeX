@@ -1,7 +1,7 @@
 type arc = {i:int ; w:float} (* but,poids *)
 
 (* Tableau d'arcs : la case i contient la liste des arcs {j ; w} tels que i->j est un arc de poids w *)
-type graphe = {g : (arc list) array ; mutable p : Maths.projection}
+type graphe = {g : (arc list) array ; mutable l : string array ; mutable p : Maths.projection}
 
 (* Renvoie une projection pseudo-aléatoire de [n] points distints*)
 let init_projection gen (n:int) =
@@ -29,13 +29,16 @@ let decale (graphe:graphe) =
   for i=0 to (n-1) do
     p.(i)<- {x = graphe.p.(i).x -. (!minx) ; y = graphe.p.(i).y -. (!miny)}
   done;
-  ({g=graphe.g ; p = p}:graphe)
+  ({g=graphe.g ; l=graphe.l ; p = p}:graphe)
 
 (* Crée un graphe de taille [n] *)
 let init_graphe (n:int) =
   assert (n>=0);
-  ({g = Array.make n [] ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
+  ({g = Array.make n [] ; l = Array.init n (Int.to_string) ; p = init_projection (Maths.pseudo_aleatoire n) n}:graphe)
 
+let renomme_etiquette (g:graphe) (i:int) (s:string) =
+  assert (i < Array.length g.g);
+  g.l.(i)<- s
 
 (* Change la projection du graphe et la remplace par une autre random *)
 let shake (graphe:graphe) gen =
@@ -56,6 +59,13 @@ let rec actualise (a:arc) (l:arc list) = match l with
   |t::q when t.i == a.i -> a::q
   |t::q -> t::(actualise a q)
 
-(* Ajoute l'arête [x]->[y] de poids [weight] dans le graphe [graphe] *)
+(* Ajoute l'arête [x]->[y] de poids [weight] dans le graphe [graphe] : non-orienté, pas de puits pour l'instant *)
 let add_edge (graphe:graphe) (x:int) (y:int) (w:float) =
-  (graphe.g).(x) <- actualise {i=y ; w=w} (graphe.g).(x)
+  if (x<>y) then (
+    (graphe.g).(x) <- actualise {i=y ; w=w} (graphe.g).(x);
+    (graphe.g).(y) <- actualise {i=x ; w=w} (graphe.g).(y)
+  )
+
+(* Compte le nombre de croisements dans la projection du graphe *)
+let croisements (graphe:graphe) =
+  0

@@ -26,11 +26,10 @@ let une_descente (graphe:Graph.graphe) (delta:float) =
 (* [n] étapes de descente. La décroissance du pas est linéaire. *)
 let descente (graphe:Graph.graphe) (n:int) =
   for i=1 to n do
-    une_descente graphe (1. /. (1.+.Float.of_int i))
-    (*une_descente graphe 0.3*)
+    une_descente graphe 0.2 (* Diminuer le pas ? *)
   done
 
-(* Choisit la projection d'énergie minimale parmi [k] essais *)
+(* Choisit la projection d'énergie minimale sur [n] étapes des descente parmi [k] essais *)
 let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
   assert (n>0);
   assert (k>0);
@@ -54,25 +53,30 @@ let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
 let graph_to_string (graphe:Graph.graphe) =
   let str = ref "" in
   let n = Array.length graphe.g in
-  str := !str ^ "\\begin{tikzpicture}\n";
+  str := !str ^ "\\begin{tikzpicture}[
+    vertex/.style = {shape=circle,draw,minimum size=2em},
+    edge/.style = {-,-Latex},
+    ]\n";
   for i=0 to (n-1) do
-    str := !str ^ "\\node[draw] (S";
+    str := !str ^ "\\node[vertex] (S";
     str := !str ^ (Int.to_string i);
     str := !str ^ ") at (";
     str := !str ^ (Float.to_string (graphe.p.(i).x));
     str := !str ^ ",";
     str := !str ^ (Float.to_string (graphe.p.(i).y));
     str := !str ^ ") {";
-    str := !str ^ (Int.to_string i);
+    str := !str ^ (graphe.l.(i));
     str := !str ^ "};\n";
   done;
 
   for i=0 to (n-1) do
     List.iter (
       fun x -> 
-        str := !str ^ "\\draw[->,>=latex] (S";
+        str := !str ^ "\\draw[edge, ultra thick] (S";
         str := !str ^ (Int.to_string i);
-        str := !str ^ ") -- (S";
+        str := !str ^ ") to node[above,sloped] {$";
+        str := !str ^ (Float.to_string (x.w));
+        str := !str ^ "$} (S";
         str := !str ^ (Int.to_string (x.i));
         str := !str ^ ");\n";
     ) graphe.g.(i)
