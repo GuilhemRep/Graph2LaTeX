@@ -83,7 +83,7 @@ let resultante_forces (s:int) (graphe:Graph.graphe) =
       let coord_point = graphe.p.(i) in
       (*let repulsion = ( potentiel_coulomb (Maths.distance coord_s coord_point) ) in*)
       let distance = Maths.distance coord_point coord_s in
-        force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) (0.008/. (distance +. d)));
+        force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) (0.01/. (distance +. d)));
     done;
 
   (* Pénalisations des angles aigus *)

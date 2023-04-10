@@ -3,7 +3,7 @@ Random.self_init ()
 let () =
     let n = 10 in
     let g = Graph.init_graphe n in
-    let prenoms = [|"Pierre"; "Sylvain"; "Marie"; "Andrée"; "Simone"; "Guy"; "Jean"; "Léonie"; "Sidonie"; "Antoine"|] in
+    let prenoms = [|"Antoinette"; "Sylvie"; "Marie"; "Andrée"; "Simone"; "Josette"; "Jeanne"; "Léonie"; "Sidonie"; "Nina"|] in
     for i=0 to (n-1) do
         Graph.renomme_etiquette g i (prenoms.(i));
     done;
@@ -13,7 +13,7 @@ let () =
         (*let a = Int.of_float(gen()) and b = Int.of_float(gen()) in*)
         let a = Random.int n and b = Random.int n in
         if a<>b then (
-        Graph.add_edge g a b (Float.of_int (1+Random.int 10));
+        Graph.add_edge_coord g a b (Float.of_int (1+Random.int 10));
         )
     done;
 
