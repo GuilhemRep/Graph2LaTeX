@@ -1,11 +1,14 @@
 Random.self_init ()
 
 let () =
-    let n = 12 in
+    let n = 20 in
     let g = Graph.init_graphe n in
+    for i=0 to (n-1) do
+        Graph.renomme_etiquette g i ("$P_{" ^ (Int.to_string i) ^ "}$")
+    done;
     (*Fonction aléatoire*)
     let gen = Maths.pseudo_aleatoire n in
-    for i=0 to 12 do
+    for i=0 to n/2 do
         (*let a = Int.of_float(gen()) and b = Int.of_float(gen()) in*)
         let a = Random.int n and b = Random.int n in
         if a<>b then (

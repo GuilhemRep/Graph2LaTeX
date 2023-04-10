@@ -8,9 +8,11 @@ all:
 	ocamlc -c Graph2LaTeX.ml
 	ocamlc -c -i Graph2LaTeX.ml > Graph2LaTeX.mli
 	ocamlc -c descente.ml
+	ocamlc -c vestale.ml
 	ocamlc -o descente Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo descente.cmo
-	./descente
+	ocamlc -o vestale Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo vestale.cmo
+	./vestale
 	pdflatex test.tex
 
 clean:
-	rm -rf exemple *.mli *.cmi *.cmo *~
+	rm -rf exemple *.mli *.cmi *.cmo *.pdf *.aux *.log *~
