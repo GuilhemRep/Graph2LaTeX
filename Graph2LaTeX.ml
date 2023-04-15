@@ -49,14 +49,17 @@ let meilleure_descente (graphe:Graph.graphe) (n:int) (k:int) =
   graphe.p<- (Graph.decale (!meilleur_graphe)).p
 
 
-(* Ecrit la projection du graphe dans le fichier file *)
-let graph_to_string (graphe:Graph.graphe) =
+(* Ecrit la projection du graphe dans le fichier file, w a vrai si on veut les poids *)
+let graph_to_string (graphe:Graph.graphe) (w:bool)=
   let str = ref "" in
   let n = Array.length graphe.g in
   str := !str ^ "\\begin{tikzpicture}[
     vertex/.style = {shape=circle,draw,minimum size=2em},
     edge/.style = {-,-Latex},
     ]\n";
+
+  
+
   for i=0 to (n-1) do
     str := !str ^ "\\node[vertex] (S";
     str := !str ^ (Int.to_string i);
@@ -72,22 +75,25 @@ let graph_to_string (graphe:Graph.graphe) =
   for i=0 to (n-1) do
     List.iter (
       fun x -> 
-        str := !str ^ "\\draw[edge, ultra thick] (S";
+        str := !str ^ "\\draw[edge] (S";
         str := !str ^ (Int.to_string i);
-        str := !str ^ ") to node[above,sloped] {$";
-        str := !str ^ (Float.to_string (x.w));
-        str := !str ^ "$} (S";
+        str := !str ^ ") to node[above,sloped] ";
+        str := !str ^ "{$";
+        if w then str := !str ^ (Float.to_string (x.w));
+        str := !str ^ "$} ";
+        str := !str ^ "(S";
         str := !str ^ (Int.to_string (x.i));
         str := !str ^ ");\n";
     ) graphe.g.(i)
-  done;
+  done;  
+
   str := !str ^ "\\end{tikzpicture}\n\n\n";
   !str
 
 (* Ecrit la projection du graphe dans le fichier file *)
-let write_file (file:string) (graphe:Graph.graphe) =
+let write_file (file:string) (graphe:Graph.graphe) (w:bool) =
   let oc = open_out file in
-  Printf.fprintf oc "%s" (graph_to_string graphe)
+  Printf.fprintf oc "%s" (graph_to_string graphe w)
 
 (* Ecrit str dans file *)
 let write_string_file (file:string) (str:string) =

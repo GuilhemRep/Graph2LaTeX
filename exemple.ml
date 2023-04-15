@@ -1,29 +1,20 @@
 Random.self_init ()
 
 let () =
-    let prenoms = [|"a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";|] in
+    let n = 26 in 
+    let prenoms = Array.init n (fun i-> "$"^(Int.to_string (i+2))^"$") in
     let g = Graph.init_graphe_label prenoms in
     (*Fonction aléatoire*)
-    Graph.add_edge g "a" "b" 2.;
-    Graph.add_edge g "b" "c" 2.;
-    Graph.add_edge g "c" "a" 2.;
-    Graph.add_edge g "b" "d" 2.;
-    Graph.add_edge g "d" "e" 2.;
-    Graph.add_edge g "e" "f" 2.;
-    Graph.add_edge g "e" "g" 2.;
-    Graph.add_edge g "f" "h" 2.;
-    Graph.add_edge g "g" "h" 2.;
-    Graph.add_edge g "f" "i" 2.;
-    Graph.add_edge g "h" "j" 2.;
-    Graph.add_edge g "g" "j" 2.;
-    Graph.add_edge g "g" "k" 2.;
-    Graph.add_edge g "k" "l" 2.;
-    Graph.add_edge g "l" "m" 2.;
-    Graph.add_edge g "m" "k" 2.;
+    for m=0 to (n-1) do
+        for i=0 to m do
+            if (m+2) mod (i+2) = 0 then Graph.add_edge_coord g i m 2.;
+        done
+    done;
 
 
-    Graph2LaTeX.meilleure_descente g 6000 10;
+
+    Graph2LaTeX.meilleure_descente g 15000 1;
     print_float (Physics.energie g);
     print_newline();
 
-    Graph2LaTeX.write_string_file "graphe.tex" (Graph2LaTeX.graph_to_string g)
+    Graph2LaTeX.write_string_file "graphe.tex" (Graph2LaTeX.graph_to_string g false)

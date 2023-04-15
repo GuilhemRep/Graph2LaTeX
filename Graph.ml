@@ -9,7 +9,7 @@ let init_projection gen (n:int) =
   let rec init n l =
     if n = 0 then l
     else (
-      let p:Maths.point = {x=gen() ; y=gen()} in
+      let p:Maths.point = {x=Float.of_int (Random.int 50) ; y=Float.of_int (Random.int 50)} in (**************)
       if List.mem p l then init n l (* Nouvel essai si point deja present dans la liste *) 
       else init (n-1) (p::l)
     ) in

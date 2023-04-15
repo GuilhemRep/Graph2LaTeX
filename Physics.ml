@@ -1,7 +1,7 @@
 open Graph
 
 (* Définition de [k] (constante de Hooke) et [d] (élongation à vide d'une arête) *)
-let k = 2. and d = 8.
+let k = 0.6 and d = 10.
 
 (* Loi de Hooke : renvoie l'énergie potentielle entre les points [p1] et [p2]*)
 let energie_arete (p1:Maths.point) (p2:Maths.point) =
@@ -63,14 +63,14 @@ let resultante_forces (s:int) (graphe:Graph.graphe) =
       )
     in
   
-  let rec fun_angle accumulateur liste_voisins nombre_voisin = match liste_voisins with
+  let rec fun_angle accumulateur liste_voisins = match liste_voisins with
     []-> accumulateur 
     |voisin::q when voisin.i == s -> fun_attr accumulateur q
     |voisin::q-> (
       let coord_voisin = graphe.p.(voisin.i) in
       let f = Maths.point2vect coord_s coord_voisin in
-      let opp_f = Maths.mult_scal_vecteur f (0.01) in
-      fun_angle (Maths.somme_vecteurs opp_f accumulateur) q (nombre_voisin + 1)
+      let opp_f = Maths.mult_scal_vecteur f (0.002) in
+      fun_angle (Maths.somme_vecteurs opp_f accumulateur) q 
     )
   in
 
@@ -83,11 +83,11 @@ let resultante_forces (s:int) (graphe:Graph.graphe) =
       let coord_point = graphe.p.(i) in
       (*let repulsion = ( potentiel_coulomb (Maths.distance coord_s coord_point) ) in*)
       let distance = Maths.distance coord_point coord_s in
-        force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) (0.01/. (distance +. d)));
+        force := Maths.somme_vecteurs (!force) (Maths.mult_scal_vecteur (gradient_energie_arete coord_s (graphe.p.(i))) (0.013/. (distance +. d)));
     done;
 
   (* Pénalisations des angles aigus *)
-  force := Maths.somme_vecteurs (!force) (fun_angle (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list) 0);
+  force := Maths.somme_vecteurs (!force) (fun_angle (Maths.init_vecteur()) (graphe.g.(s):Graph.arc list));
 
   assert (not (Float.is_nan (!force.x)));
   assert (not (Float.is_nan (!force.y)));

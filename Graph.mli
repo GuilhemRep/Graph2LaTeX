@@ -4,12 +4,12 @@ type graphe = {
   mutable l : string array;
   mutable p : Maths.projection;
 }
-val init_projection : (unit -> float) -> int -> Maths.projection
+val init_projection : 'a -> int -> Maths.projection
 val decale : graphe -> graphe
 val init_graphe : int -> graphe
 val init_graphe_label : string array -> graphe
 val renomme_etiquette : graphe -> int -> string -> unit
-val shake : graphe -> (unit -> float) -> unit
+val shake : graphe -> 'a -> unit
 val connected : graphe -> int -> int -> bool
 val actualise : arc -> arc list -> arc list
 val add_edge_coord : graphe -> int -> int -> float -> unit
