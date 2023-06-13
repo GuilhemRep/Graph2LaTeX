@@ -1,7 +1,7 @@
 Random.self_init ()
 
 let () =
-    let n = 10 in
+    let n = 15 in
     let g = Graph.init_graphe n in
     for i=0 to (n-1) do
         Graph.renomme_etiquette g i ("$P_{" ^ (Int.to_string i) ^ "}$")
@@ -15,7 +15,7 @@ let () =
     done;
     for i=0 to 40000 do
         Graph2LaTeX.une_descente g 0.2;
-        if i mod 80 == 0 then (
+        if i mod 300 == 0 then (
         str := !str ^ (Graph2LaTeX.graph_to_string g false);
         str := !str ^ "\\newpage")
     done;

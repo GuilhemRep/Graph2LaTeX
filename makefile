@@ -35,5 +35,14 @@ vestale: vestale.cmo Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo
 	./vestale
 	pdflatex test.tex
 
+lwe.cmo:
+	ocamlc -c lwe.ml
+
+lwe: lwe.cmo Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo
+	ocamlc -o lwe Maths.cmo Graph.cmo Physics.cmo Graph2LaTeX.cmo lwe.cmo
+	rm -rf lwe.cmo
+	./lwe
+	pdflatex test.tex
+
 clean:
 	rm -rf exemple *.mli *.cmi *.cmo *.aux *.log *~

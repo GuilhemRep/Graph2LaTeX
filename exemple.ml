@@ -1,7 +1,7 @@
 Random.self_init ()
 
 let () =
-    let n = 26 in 
+    let n = 40 in 
     let prenoms = Array.init n (fun i-> "$"^(Int.to_string (i+2))^"$") in
     let g = Graph.init_graphe_label prenoms in
     (*Fonction aléatoire*)

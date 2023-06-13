@@ -1,7 +1,7 @@
 open Graph
 
 (* Définition de [k] (constante de Hooke) et [d] (élongation à vide d'une arête) *)
-let k = 0.6 and d = 10.
+let k = 0.6 and d = 7.
 
 (* Loi de Hooke : renvoie l'énergie potentielle entre les points [p1] et [p2]*)
 let energie_arete (p1:Maths.point) (p2:Maths.point) =

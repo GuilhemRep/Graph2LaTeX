@@ -54,7 +54,7 @@ let graph_to_string (graphe:Graph.graphe) (w:bool)=
   let str = ref "" in
   let n = Array.length graphe.g in
   str := !str ^ "\\begin{tikzpicture}[
-    vertex/.style = {shape=circle,draw,minimum size=2em},
+    vertex/.style = {shape=rectangle,draw,minimum size=1em},
     edge/.style = {-,-Latex},
     ]\n";
 
