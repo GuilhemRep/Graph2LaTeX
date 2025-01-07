@@ -4,4 +4,9 @@
 *.log
 *.pdf
 *.tex
+*.mli
+descente
+lwe
+vestale
+exemple
 .vscode
